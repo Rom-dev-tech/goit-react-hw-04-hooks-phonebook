@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { useMemo, useState } from 'react';
 import shortid from 'shortid';
 import toastr from 'toastr';
 import toastrOptions from './components/Notification';
@@ -15,48 +15,28 @@ import Modal from './components/Modal';
 import IconButton from './components/IconButton';
 import { ReactComponent as AddIcon } from './icons/add.svg';
 import FlexWrapper from './components/FlexWrapper';
+import useLocalStorage from './Hooks/useLocalStorage';
 
-class App extends Component {
-  state = {
-    contacts: [],
-    filter: '',
-    showModal: false,
+const App = () => {
+  const [contacts, setContacts] = useLocalStorage('contacts', []);
+  const [filter, setFilter] = useState('');
+  const [showModal, setShowModal] = useState(false);
+
+  const checkNameValidatiton = (newName) => {
+    return contacts.find(
+      ({ name }) => name.toLowerCase() === newName.toLowerCase()
+    );
   };
 
-  componentDidMount() {
-    const contacts = localStorage.getItem('contacts');
-    const parsedContacts = JSON.parse(contacts);
-
-    if (parsedContacts) {
-      this.setState({ contacts: parsedContacts });
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const nextContacts = this.state.contacts;
-    const prevContacts = prevState.contacts;
-
-    if (nextContacts !== prevContacts) {
-      localStorage.setItem('contacts', JSON.stringify(nextContacts));
-    }
-  }
-
-  checkNameValidatiton = (newName) => {
-    const contacts = this.state.contacts;
-    return contacts.find(({ name }) => name === newName);
-  };
-
-  addContact = ({ name, number }) => {
-    if (!this.checkNameValidatiton(name)) {
+  const addContact = ({ name, number }) => {
+    if (!checkNameValidatiton(name)) {
       const contact = {
         id: shortid.generate(),
         name,
         number,
       };
 
-      this.setState(({ contacts }) => ({
-        contacts: [contact, ...contacts],
-      }));
+      setContacts([contact, ...contacts]);
       return;
     }
 
@@ -64,76 +44,65 @@ class App extends Component {
     toastrOptions();
   };
 
-  deleteContact = (todoId) => {
-    this.setState((prevState) => ({
-      contacts: prevState.contacts.filter((contact) => contact.id !== todoId),
-    }));
+  const deleteContact = (todoId) => {
+    setContacts((state) => state.filter((contact) => contact.id !== todoId));
   };
 
-  changeFilter = (event) => {
-    this.setState({ filter: event.currentTarget.value });
+  const changeFilter = (event) => {
+    setFilter(event.currentTarget.value);
   };
 
-  getVisibleContacts = () => {
-    const { filter, contacts } = this.state;
+  const getVisibleContacts = useMemo(() => {
     const normalizedFilter = filter.toLowerCase();
 
     return contacts.filter((contact) =>
       contact.name.toLowerCase().includes(normalizedFilter)
     );
-  };
+  }, [contacts, filter]);
 
-  toggleModal = () => {
-    this.setState(({ showModal }) => ({
-      showModal: !showModal,
-    }));
-  };
-
-  render() {
-    const { contacts, filter, showModal } = this.state;
-    const visibleContacts = this.getVisibleContacts();
-    const totalContactsCount = contacts.length;
-    return (
-      <Container>
-        <Clock direction="end" size={30} />
-        <MainTitle title="Phonebook" size={5} direction="center" />
-
-        <FlexWrapper>
-          <Сounter
-            title="Total contacts:"
-            totalContactsCount={totalContactsCount}
-          />
-
-          <IconButton onClick={this.toggleModal} aria-label="add contact">
-            <AddIcon width="20" height="20" fill="#03a9f4" />
-          </IconButton>
-        </FlexWrapper>
-
-        {showModal && (
-          <Modal onClose={this.toggleModal}>
-            <ContactsFomr
-              onSubmit={this.addContact}
-              onClose={this.toggleModal}
-            />
-          </Modal>
-        )}
-
-        {totalContactsCount <= 0 ? (
-          <NotificatiomMessage message={'no contacts yet ...'} />
-        ) : (
-          <>
-            <Title title="Contacts" type="h1" />
-            <Filter value={filter} onChange={this.changeFilter} />
-
-            <ContactsList
-              contacts={visibleContacts}
-              onDeleteContact={this.deleteContact}
-            />
-          </>
-        )}
-      </Container>
-    );
+  function toggleModal() {
+    setShowModal(!showModal);
   }
-}
+
+  const totalContactsCount = contacts.length;
+
+  return (
+    <Container>
+      <Clock direction="end" size={30} />
+      <MainTitle title="Phonebook" size={5} direction="center" />
+
+      <FlexWrapper>
+        <Сounter
+          title="Total contacts:"
+          totalContactsCount={totalContactsCount}
+        />
+
+        <IconButton onClick={toggleModal} aria-label="add contact">
+          <AddIcon width="20" height="20" fill="#03a9f4" />
+        </IconButton>
+      </FlexWrapper>
+
+      {showModal && (
+        <Modal onClose={toggleModal}>
+          <ContactsFomr onSubmitContacts={addContact} onClose={toggleModal} />
+        </Modal>
+      )}
+
+      {totalContactsCount <= 0 ? (
+        <NotificatiomMessage message={'no contacts yet ...'} />
+      ) : (
+        <>
+          <Title title="Contacts" type="h1" />
+          <Filter value={filter} onChange={changeFilter} />
+
+          <ContactsList
+            contacts={getVisibleContacts}
+            onDeleteContact={deleteContact}
+          />
+        </>
+      )}
+    </Container>
+  );
+};
 
 export default App;
