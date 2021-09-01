@@ -1,0 +1,41 @@
+@import 'styles/shared';
+@import url('https://fonts.googleapis.com/css2?family=Lobster&family=Lobster+Two:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+body {
+  margin: 0;
+  background-color: $white;
+  color: $indigo-accent;
+  line-height: 1.5;
+  font-family: $primary-font-stack;
+
+  background-image: url('http://bgfons.com/upload/paper_grid_PNG5421.png');
+
+  @media screen and (min-width: $tablet) {
+    background: url('../images/a-book-gd4a363064_1280.png');
+  }
+
+  @media screen and (min-width: $desktop) {
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+p {
+  margin-top: 0;
+}

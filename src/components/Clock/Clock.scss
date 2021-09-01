@@ -1,0 +1,10 @@
+@import 'styles/shared';
+
+.clock__face {
+  font-weight: 500;
+  margin-bottom: 0;
+
+  color: $indigo-accent;
+  text-shadow: 0 0 100px $indigo, 0 0 20px $indigo, 0 0 40px $indigo,
+    0 0 80px $indigo, 0 0 120px $indigo, 0 0 160px $indigo;
+}

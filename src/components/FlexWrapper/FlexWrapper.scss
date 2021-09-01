@@ -1,0 +1,16 @@
+@import 'styles/shared.scss';
+
+.flex__wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 400px;
+
+  @media screen and (min-width: $tablet) {
+    margin-bottom: 11px;
+  }
+
+  @media screen and (min-width: $desktop) {
+    margin-bottom: 0;
+  }
+}

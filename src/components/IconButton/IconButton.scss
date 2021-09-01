@@ -1,0 +1,27 @@
+@import 'styles/shared.scss';
+
+.icon__button {
+  margin: 0;
+  padding: 15px 20px;
+  border: none;
+  border-radius: 50%;
+  color: $white;
+  font: inherit;
+  background-color: inherit;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  @media screen and (min-width: $tablet) {
+    &:not(:last-child) {
+      padding: 15px 40px;
+    }
+  }
+}
+
+svg {
+  width: 30px;
+  height: 30px;
+}

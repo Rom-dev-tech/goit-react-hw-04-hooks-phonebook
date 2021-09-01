@@ -1,0 +1,11 @@
+@import 'styles/shared.scss';
+
+.message {
+  font-size: 1.5rem;
+  margin-top: 50px;
+  text-align: center;
+
+  color: $indigo-accent;
+  text-shadow: 0 0 100px $indigo, 0 0 20px $indigo, 0 0 40px $indigo,
+    0 0 80px $indigo, 0 0 120px $indigo, 0 0 160px $indigo;
+}
